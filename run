@@ -1,0 +1,55 @@
+#!/bin/bash
+# Credits for: Krzysieqq (https://github.com/krzysieqq/DUNP)
+set -e
+
+# Setup Main Container for Project
+MAIN_CONTAINER=backend
+PROJECT_NAME=
+#ADDITIONAL_DOCKER_COMPOSE_PARAMS="-f ./docker/docker-compose.local.yml"
+LOCAL_FILES="
+./configs/uwsgi.ini.example
+./docker/docker-compose.local.yml.example
+./docker/entrypoint.local.sh.example
+./docker/requirements.local.txt.example
+./envs/.env.local.example"
+
+
+function compose() {
+  CI_REGISTRY=localhost RELEASE_VERSION=local docker-compose -f ./docker/docker-compose.yml $ADDITIONAL_DOCKER_COMPOSE_PARAMS -p $PROJECT_NAME $@
+}
+
+function setup_local_files() {
+  if [ ! -f "./configs/uwsgi.ini" ]; then
+    for f in $LOCAL_FILES
+      do
+        cp "$f" "${f::${#f}-8}"
+      done
+    sed -i '1,/PROJECT_NAME=/{x;/first/s///;x;s/PROJECT_NAME=/PROJECT_NAME='$1'/;}' ./run.sh
+    sed -i '1,/module=/{x;/first/s///;x;s/module=/module='$1'.wsgi:application/;}' ./configs/uwsgi.ini
+    sed -i '1,/DJANGO_SETTINGS_MODULE=/{x;/first/s///;x;s/DJANGO_SETTINGS_MODULE=/DJANGO_SETTINGS_MODULE='$1'.settings/;}' ./envs/.env.local
+    sed -i'' -e '1,/ADDITIONAL_DOCKER_COMPOSE_PARAMS/{x;/first/s///;x;s/#ADDITIONAL_DOCKER_COMPOSE_PARAMS/ADDITIONAL_DOCKER_COMPOSE_PARAMS/;}' ./run.sh
+  fi
+}
+
+case $1 in
+  help|-h|--help)
+    echo "Usage (params with '*' are optional):"
+  ;;
+  bo)
+    chmod +x frontend/scripts/run
+    ./backend/scripts/run $2
+    exit
+  ;;
+  start)
+    sudo docker compose up --build
+    exit
+  ;;
+  fo)
+    chmod +x frontend/scripts/run
+    ./frontend/scripts/run $2
+    exit
+  ;;
+  *)
+  exit
+  ;;
+esac

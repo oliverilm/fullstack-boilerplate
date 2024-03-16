@@ -1,0 +1,43 @@
+name: Deploy Stage
+run-name: ${{ inputs.service }} ${{ github.ref_name }} ${{ github.sha }} by @${{ github.actor }}
+on:
+    workflow_dispatch:
+        inputs:
+            service:
+                description: Service
+                required: true
+                type: choice
+                options:
+                    - Please select an option below
+                    - backend
+                    - frontend
+            deploy_stage:
+                type: boolean
+                default: true
+                description: Deploy to prod
+            
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        if: inputs.service != 'Please select an option below'
+        steps:
+            - name: "test"
+              run: echo test
+            # - uses: actions/checkout@v4
+            # - name: get-npm-version
+            #   id: package-version
+            #   uses: martinbeentjes/npm-get-version-action@v1.3.1
+            #   with:
+            #       path: ${{ inputs.service }}
+            # - name: Aggregate environments
+            #   run: |
+            #       environments=$(
+            #           echo '{
+            #               "respin/prod": ${{ inputs.deploy_respin_prod }},
+            #               "sisu-tech/core/prod": ${{ inputs.deploy_sisu_tech_core_prod }}
+            #           }' | jq -c '. | to_entries | map(select(.value).key)'
+            #       )
+            #       echo "environments=${environments}" >> $GITHUB_ENV
+            # - name: Notify Argo
+            #   run: .github/scripts/argo-image-built.sh ${{ inputs.service }} ${{ github.sha }} ${{ github.ref_name }} ${{ steps.package-version.outputs.current-version}} '${{ env.environments }}' ${{ github.ref_type }} ${{ github.actor }}
+  

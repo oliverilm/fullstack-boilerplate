@@ -1,0 +1,42 @@
+#!/bin/bash
+set -e
+
+cd backend
+
+
+case $1 in
+  help|-h|--help)
+    echo "Usage (params with '*' are optional):"
+  ;;
+  install)
+    source venv/bin/activate
+    pip3 install -r requirements.txt
+    exit
+  ;;
+  shell)
+    docker-compose exec api sh
+  ;;
+  makemigrations)
+    docker-compose exec api sh python3 manage.py makemigrations
+    exit
+  ;;
+  migrate)
+    docker-compose exec api sh python3 manage.py migrate
+    exit
+  ;;
+  test)
+    docker-compose exec api python3 manage.py test
+    exit
+  ;;
+  build)
+    docker-compose up --build
+    exit
+  ;;
+  createsuperuser)
+    docker-compose exec api python3 manage.py createsuperuser
+    exit
+  ;;
+  *)
+  exit
+  ;;
+esac

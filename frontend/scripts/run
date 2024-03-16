@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e
+
+cd frontend
+
+
+case $1 in
+  help|-h|--help)
+    echo "Usage (params with '*' are optional):"
+  ;;
+  start)
+    npm run dev
+    exit
+  ;;
+  init)
+    npm install
+    npm run dev
+    exit
+  ;;
+  *)
+  exit
+  ;;
+esac

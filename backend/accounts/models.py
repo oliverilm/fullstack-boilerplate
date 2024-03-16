@@ -43,6 +43,17 @@ class MyUser(AbstractBaseUser):
     All information that can't be get by the social auth provider needs to be able
     left blank/null. Easyest way of handling it.
     To force a user to set those information later, use the session middleware.
+    
+    TODO: 
+        add country
+        add terms accepted boolean
+        add cookie policy boolean
+
+        these perhaps go under profile, in that case, add profile fk
+        add firstName
+        add lastName
+        add dob
+        add idCode
     """
     email = models.EmailField(
         verbose_name="email address",

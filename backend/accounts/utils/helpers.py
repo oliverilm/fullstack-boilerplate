@@ -1,5 +1,5 @@
 class GenericContent:
-    def __init__(self, message, code, type) -> None:
+    def __init__(self, message, code = 0, type = "message") -> None:
         self.message = message
         self.code = code
         self.type = type
@@ -7,7 +7,7 @@ class GenericContent:
     def __str__(self) -> str:
         return { self.type : {
             "message": self.message,
-            "code": self.code if self.type is "error" else 0,
+            "code": self.code if self.type == "error" else 0,
             "status": self.type
         }}
 
@@ -17,5 +17,5 @@ class ErrorContent(GenericContent):
 
 
 class MessageContent(GenericContent):
-    def __init__(self, message, code) -> None:
+    def __init__(self, message, code = 0) -> None:
         super().__init__(message, code, "message")

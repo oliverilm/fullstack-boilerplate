@@ -3,37 +3,50 @@ set -e
 
 cd backend
 
+localCompose=./compose/docker-compose.yml
+prodCompose=./compose/docker-compose-prod.yml
+
+localCommand="docker-compose -f $localCompose"
+prodCommand="docker-compose -f $prodCompose"
 
 case $1 in
   help|-h|--help)
-    echo "Usage (params with '*' are optional):"
+    echo "Backend usage commands:"
+    echo "./run bo install                activate venv and install deps."
+    echo "./run bo makemigrations         generate new migrations for the DB."
+    echo "./run bo migrate                apply migrations to the DB."
+    echo "./run bo test                   run tests."
+    echo "./run bo build|start            start local environment server."
+    echo "./run bo prod                   start prod environment server."
+    echo "./run bo createsuperuser        create super user account."
   ;;
   install)
     source venv/bin/activate
     pip3 install -r requirements.txt
     exit
   ;;
-  shell)
-    docker-compose exec api sh
-  ;;
   makemigrations)
-    docker-compose exec api sh python3 manage.py makemigrations
+    sudo $localCommand run api python manage.py makemigrations
     exit
   ;;
   migrate)
-    docker-compose exec api sh python3 manage.py migrate
+    sudo $localCommand run api python3 manage.py migrate
     exit
   ;;
   test)
-    docker-compose exec api python3 manage.py test
+    sudo $localCommand run api python3 manage.py test
     exit
   ;;
-  build)
-    docker-compose up --build
+  build|start)
+    sudo $localCommand up 
+    exit
+  ;;
+  prod)
+    sudo $prodCompose up 
     exit
   ;;
   createsuperuser)
-    docker-compose exec api python3 manage.py createsuperuser
+    sudo $localCommand run api python3 manage.py createsuperuser
     exit
   ;;
   *)

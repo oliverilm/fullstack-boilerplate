@@ -21,9 +21,9 @@ jobs:
         runs-on: ubuntu-latest
         if: inputs.service != 'Please select an option below'
         steps:
-            - name: "test"
+            - uses: actions/checkout@v4
+            - name: Build for production
               run: echo test
-            # - uses: actions/checkout@v4
             # - name: get-npm-version
             #   id: package-version
             #   uses: martinbeentjes/npm-get-version-action@v1.3.1
